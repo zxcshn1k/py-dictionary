@@ -11,10 +11,10 @@ class Node:
 
 
 class Dictionary:
-    def __init__(
+        def __init__(
         self,
         initial_capacity: int = 8,
-        load_factor: float | int = 0.7
+        load_factor: float = 0.7
     ) -> None:
         self._capacity = initial_capacity
         self._load_factor = load_factor
@@ -74,4 +74,36 @@ class Dictionary:
             if index == original_index:
                 break
 
-        raise KeyError(f"Ключ не знайдено: {key}")
+        raise KeyError(f"Ключ не найден: {key}")
+
+    def __delitem__(self, key: Any) -> None:
+        hash_value = self._get_hash(key)
+        index = hash_value % self._capacity
+
+        original_index = index
+        target_index = None
+
+        while self._buckets[index] is not None:
+            node = self._buckets[index]
+            if node.hash == hash_value and node.key == key:
+                target_index = index
+                break
+            index = (index + 1) % self._capacity
+            if index == original_index:
+                break
+
+        if target_index is None:
+            raise KeyError(f"Ключ не найден: {key}")
+
+        old_buckets = self._buckets
+        old_buckets[target_index] = None
+        self._buckets = [None] * self._capacity
+        self._size = 0
+
+        for node in old_buckets:
+            if node is not None:
+                self.__setitem__(node.key, node.value)
+
+    def clear(self) -> None:
+        self._size = 0
+        self._buckets = [None] * self._capacity
