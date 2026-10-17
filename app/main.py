@@ -1,9 +1,13 @@
+from builtins import hash
 from typing import Any
 
 
 class Node:
     def __init__(
-        self, key: Any, value: Any, hash_value: int
+        self,
+        key: Any,
+        value: Any,
+        hash_value: int,
     ) -> None:
         self.key = key
         self.value = value
